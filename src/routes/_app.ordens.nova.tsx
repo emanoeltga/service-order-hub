@@ -1,0 +1,81 @@
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { PageHeader } from "@/components/common/PageHeader";
+import { Card, CardContent } from "@/components/ui/card";
+import { FormInput } from "@/components/common/FormInput";
+import { FormSelect } from "@/components/common/FormSelect";
+import { FormTextarea } from "@/components/common/FormTextarea";
+import { Button } from "@/components/ui/button";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { mockClientes, mockTecnicos } from "@/lib/mock-data";
+import { toast } from "sonner";
+
+export const Route = createFileRoute("/_app/ordens/nova")({ component: NovaOSPage });
+
+const schema = z.object({
+  titulo: z.string().min(3, "Título obrigatório"),
+  cliente: z.string().min(1, "Selecione um cliente"),
+  tecnico: z.string().min(1, "Selecione um técnico"),
+  prioridade: z.string().min(1),
+  prazo: z.string().min(1, "Informe o prazo"),
+  valor: z.coerce.number().min(0),
+  descricao: z.string().min(5, "Descreva o serviço"),
+});
+type FormData = z.infer<typeof schema>;
+
+function NovaOSPage() {
+  const navigate = useNavigate();
+  const { register, handleSubmit, control, formState: { errors, isSubmitting } } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues: { prioridade: "media", valor: 0 },
+  });
+
+  const onSubmit = async (_data: FormData) => {
+    await new Promise((r) => setTimeout(r, 400));
+    toast.success("Ordem de Serviço criada");
+    navigate({ to: "/ordens" });
+  };
+
+  return (
+    <div>
+      <PageHeader title="Nova Ordem de Serviço" description="Preencha os dados para abrir uma nova OS" />
+      <Card>
+        <CardContent className="p-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <FormInput label="Título" placeholder="Ex: Manutenção do servidor" {...register("titulo")} error={errors.titulo?.message} />
+            <div className="grid gap-4 md:grid-cols-2">
+              <Controller name="cliente" control={control} render={({ field }) => (
+                <FormSelect label="Cliente" value={field.value} onValueChange={field.onChange}
+                  options={mockClientes.map((c) => ({ label: c.nome, value: c.nome }))} error={errors.cliente?.message} />
+              )} />
+              <Controller name="tecnico" control={control} render={({ field }) => (
+                <FormSelect label="Técnico responsável" value={field.value} onValueChange={field.onChange}
+                  options={mockTecnicos.map((t) => ({ label: t.nome, value: t.nome }))} error={errors.tecnico?.message} />
+              )} />
+            </div>
+            <div className="grid gap-4 md:grid-cols-3">
+              <Controller name="prioridade" control={control} render={({ field }) => (
+                <FormSelect label="Prioridade" value={field.value} onValueChange={field.onChange}
+                  options={[
+                    { label: "Baixa", value: "baixa" },
+                    { label: "Média", value: "media" },
+                    { label: "Alta", value: "alta" },
+                    { label: "Urgente", value: "urgente" },
+                  ]} />
+              )} />
+              <FormInput label="Prazo" type="date" {...register("prazo")} error={errors.prazo?.message} />
+              <FormInput label="Valor (R$)" type="number" step="0.01" {...register("valor")} error={errors.valor?.message} />
+            </div>
+            <FormTextarea label="Descrição" rows={5} placeholder="Descreva o serviço a ser executado..."
+              {...register("descricao")} error={errors.descricao?.message} />
+            <div className="flex justify-end gap-2 pt-2">
+              <Button type="button" variant="outline" onClick={() => navigate({ to: "/ordens" })}>Cancelar</Button>
+              <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Salvando..." : "Criar OS"}</Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
