@@ -2,11 +2,16 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { Topbar } from "@/components/layout/Topbar";
+import { getSession } from "@/lib/auth";
 
 export const Route = createFileRoute("/_app")({
-  beforeLoad: () => {
-    if (typeof window !== "undefined" && !localStorage.getItem("os-auth")) {
-      throw redirect({ to: "/login" });
+  beforeLoad: ({ location }) => {
+    if (typeof window === "undefined") return;
+    const session = getSession();
+    if (!session) throw redirect({ to: "/login" });
+    // Bloqueia rotas /admin/* para quem não é administrador.
+    if (location.pathname.startsWith("/admin") && session.role !== "admin") {
+      throw redirect({ to: "/" });
     }
   },
   component: AppLayout,
