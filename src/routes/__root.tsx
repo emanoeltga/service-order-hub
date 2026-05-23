@@ -76,11 +76,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "OS Control — Gestão de Ordens de Serviço" },
       { name: "description", content: "Sistema enterprise de Controle de Ordens de Serviço" },
       { name: "author", content: "OS Control" },
-      { property: "og:title", content: "OS Control" },
+      { property: "og:title", content: "OS Control — Gestão de Ordens de Serviço" },
       { property: "og:description", content: "Sistema enterprise de Controle de Ordens de Serviço" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "OS Control — Gestão de Ordens de Serviço" },
+      { name: "twitter:description", content: "Sistema enterprise de Controle de Ordens de Serviço" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/9dd39bdd-45d7-4d7f-a078-a1c992aeffee" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/9dd39bdd-45d7-4d7f-a078-a1c992aeffee" },
     ],
     links: [
       {
