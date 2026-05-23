@@ -2,11 +2,14 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard, ClipboardList, KanbanSquare, CalendarRange, CheckSquare,
   Users, Wrench, Package, Briefcase, BarChart3, Settings, HardHat,
+  UserCog, Shield, KeyRound, Menu as MenuIcon, LayoutGrid, UserCircle,
+  SlidersHorizontal, Bot, BookOpen,
 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { isAdmin } from "@/lib/auth";
 
 const operacional = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
@@ -23,6 +26,18 @@ const cadastros = [
   { title: "Serviços", url: "/servicos", icon: Briefcase },
 ];
 
+const administracao = [
+  { title: "Usuários", url: "/admin/usuarios", icon: UserCog },
+  { title: "Perfis de Acesso", url: "/admin/perfis", icon: Shield },
+  { title: "Permissões", url: "/admin/permissoes", icon: KeyRound },
+  { title: "Menus e Telas", url: "/admin/menus", icon: MenuIcon },
+  { title: "Dashboard por Perfil", url: "/admin/dashboard-perfil", icon: LayoutGrid },
+  { title: "Dashboard por Usuário", url: "/admin/dashboard-usuario", icon: UserCircle },
+  { title: "Configurações do Sistema", url: "/admin/configuracoes-sistema", icon: SlidersHorizontal },
+  { title: "Configuração da IA", url: "/admin/ia", icon: Bot },
+  { title: "Base de Conhecimento IA", url: "/admin/base-conhecimento", icon: BookOpen },
+];
+
 const sistema = [
   { title: "Relatórios", url: "/relatorios", icon: BarChart3 },
   { title: "Configurações", url: "/configuracoes", icon: Settings },
@@ -31,6 +46,7 @@ const sistema = [
 export function AppSidebar() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const isActive = (url: string) => (url === "/" ? path === "/" : path.startsWith(url));
+  const showAdmin = isAdmin();
 
   const renderGroup = (label: string, items: typeof operacional) => (
     <SidebarGroup>
@@ -68,6 +84,7 @@ export function AppSidebar() {
       <SidebarContent>
         {renderGroup("Operacional", operacional)}
         {renderGroup("Cadastros", cadastros)}
+        {showAdmin && renderGroup("Administração", administracao)}
         {renderGroup("Sistema", sistema)}
       </SidebarContent>
     </Sidebar>

@@ -24,6 +24,15 @@ import { Route as AppAprovacoesRouteImport } from './routes/_app.aprovacoes'
 import { Route as AppOrdensIndexRouteImport } from './routes/_app.ordens.index'
 import { Route as AppOrdensNovaRouteImport } from './routes/_app.ordens.nova'
 import { Route as AppOrdensIdRouteImport } from './routes/_app.ordens.$id'
+import { Route as AppAdminUsuariosRouteImport } from './routes/_app.admin.usuarios'
+import { Route as AppAdminPermissoesRouteImport } from './routes/_app.admin.permissoes'
+import { Route as AppAdminPerfisRouteImport } from './routes/_app.admin.perfis'
+import { Route as AppAdminMenusRouteImport } from './routes/_app.admin.menus'
+import { Route as AppAdminIaRouteImport } from './routes/_app.admin.ia'
+import { Route as AppAdminDashboardUsuarioRouteImport } from './routes/_app.admin.dashboard-usuario'
+import { Route as AppAdminDashboardPerfilRouteImport } from './routes/_app.admin.dashboard-perfil'
+import { Route as AppAdminConfiguracoesSistemaRouteImport } from './routes/_app.admin.configuracoes-sistema'
+import { Route as AppAdminBaseConhecimentoRouteImport } from './routes/_app.admin.base-conhecimento'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -99,6 +108,54 @@ const AppOrdensIdRoute = AppOrdensIdRouteImport.update({
   path: '/ordens/$id',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminUsuariosRoute = AppAdminUsuariosRouteImport.update({
+  id: '/admin/usuarios',
+  path: '/admin/usuarios',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminPermissoesRoute = AppAdminPermissoesRouteImport.update({
+  id: '/admin/permissoes',
+  path: '/admin/permissoes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminPerfisRoute = AppAdminPerfisRouteImport.update({
+  id: '/admin/perfis',
+  path: '/admin/perfis',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminMenusRoute = AppAdminMenusRouteImport.update({
+  id: '/admin/menus',
+  path: '/admin/menus',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminIaRoute = AppAdminIaRouteImport.update({
+  id: '/admin/ia',
+  path: '/admin/ia',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminDashboardUsuarioRoute =
+  AppAdminDashboardUsuarioRouteImport.update({
+    id: '/admin/dashboard-usuario',
+    path: '/admin/dashboard-usuario',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppAdminDashboardPerfilRoute = AppAdminDashboardPerfilRouteImport.update({
+  id: '/admin/dashboard-perfil',
+  path: '/admin/dashboard-perfil',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminConfiguracoesSistemaRoute =
+  AppAdminConfiguracoesSistemaRouteImport.update({
+    id: '/admin/configuracoes-sistema',
+    path: '/admin/configuracoes-sistema',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppAdminBaseConhecimentoRoute =
+  AppAdminBaseConhecimentoRouteImport.update({
+    id: '/admin/base-conhecimento',
+    path: '/admin/base-conhecimento',
+    getParentRoute: () => AppRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
@@ -112,6 +169,15 @@ export interface FileRoutesByFullPath {
   '/relatorios': typeof AppRelatoriosRoute
   '/servicos': typeof AppServicosRoute
   '/tecnicos': typeof AppTecnicosRoute
+  '/admin/base-conhecimento': typeof AppAdminBaseConhecimentoRoute
+  '/admin/configuracoes-sistema': typeof AppAdminConfiguracoesSistemaRoute
+  '/admin/dashboard-perfil': typeof AppAdminDashboardPerfilRoute
+  '/admin/dashboard-usuario': typeof AppAdminDashboardUsuarioRoute
+  '/admin/ia': typeof AppAdminIaRoute
+  '/admin/menus': typeof AppAdminMenusRoute
+  '/admin/perfis': typeof AppAdminPerfisRoute
+  '/admin/permissoes': typeof AppAdminPermissoesRoute
+  '/admin/usuarios': typeof AppAdminUsuariosRoute
   '/ordens/$id': typeof AppOrdensIdRoute
   '/ordens/nova': typeof AppOrdensNovaRoute
   '/ordens/': typeof AppOrdensIndexRoute
@@ -128,6 +194,15 @@ export interface FileRoutesByTo {
   '/servicos': typeof AppServicosRoute
   '/tecnicos': typeof AppTecnicosRoute
   '/': typeof AppIndexRoute
+  '/admin/base-conhecimento': typeof AppAdminBaseConhecimentoRoute
+  '/admin/configuracoes-sistema': typeof AppAdminConfiguracoesSistemaRoute
+  '/admin/dashboard-perfil': typeof AppAdminDashboardPerfilRoute
+  '/admin/dashboard-usuario': typeof AppAdminDashboardUsuarioRoute
+  '/admin/ia': typeof AppAdminIaRoute
+  '/admin/menus': typeof AppAdminMenusRoute
+  '/admin/perfis': typeof AppAdminPerfisRoute
+  '/admin/permissoes': typeof AppAdminPermissoesRoute
+  '/admin/usuarios': typeof AppAdminUsuariosRoute
   '/ordens/$id': typeof AppOrdensIdRoute
   '/ordens/nova': typeof AppOrdensNovaRoute
   '/ordens': typeof AppOrdensIndexRoute
@@ -146,6 +221,15 @@ export interface FileRoutesById {
   '/_app/servicos': typeof AppServicosRoute
   '/_app/tecnicos': typeof AppTecnicosRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/admin/base-conhecimento': typeof AppAdminBaseConhecimentoRoute
+  '/_app/admin/configuracoes-sistema': typeof AppAdminConfiguracoesSistemaRoute
+  '/_app/admin/dashboard-perfil': typeof AppAdminDashboardPerfilRoute
+  '/_app/admin/dashboard-usuario': typeof AppAdminDashboardUsuarioRoute
+  '/_app/admin/ia': typeof AppAdminIaRoute
+  '/_app/admin/menus': typeof AppAdminMenusRoute
+  '/_app/admin/perfis': typeof AppAdminPerfisRoute
+  '/_app/admin/permissoes': typeof AppAdminPermissoesRoute
+  '/_app/admin/usuarios': typeof AppAdminUsuariosRoute
   '/_app/ordens/$id': typeof AppOrdensIdRoute
   '/_app/ordens/nova': typeof AppOrdensNovaRoute
   '/_app/ordens/': typeof AppOrdensIndexRoute
@@ -164,6 +248,15 @@ export interface FileRouteTypes {
     | '/relatorios'
     | '/servicos'
     | '/tecnicos'
+    | '/admin/base-conhecimento'
+    | '/admin/configuracoes-sistema'
+    | '/admin/dashboard-perfil'
+    | '/admin/dashboard-usuario'
+    | '/admin/ia'
+    | '/admin/menus'
+    | '/admin/perfis'
+    | '/admin/permissoes'
+    | '/admin/usuarios'
     | '/ordens/$id'
     | '/ordens/nova'
     | '/ordens/'
@@ -180,6 +273,15 @@ export interface FileRouteTypes {
     | '/servicos'
     | '/tecnicos'
     | '/'
+    | '/admin/base-conhecimento'
+    | '/admin/configuracoes-sistema'
+    | '/admin/dashboard-perfil'
+    | '/admin/dashboard-usuario'
+    | '/admin/ia'
+    | '/admin/menus'
+    | '/admin/perfis'
+    | '/admin/permissoes'
+    | '/admin/usuarios'
     | '/ordens/$id'
     | '/ordens/nova'
     | '/ordens'
@@ -197,6 +299,15 @@ export interface FileRouteTypes {
     | '/_app/servicos'
     | '/_app/tecnicos'
     | '/_app/'
+    | '/_app/admin/base-conhecimento'
+    | '/_app/admin/configuracoes-sistema'
+    | '/_app/admin/dashboard-perfil'
+    | '/_app/admin/dashboard-usuario'
+    | '/_app/admin/ia'
+    | '/_app/admin/menus'
+    | '/_app/admin/perfis'
+    | '/_app/admin/permissoes'
+    | '/_app/admin/usuarios'
     | '/_app/ordens/$id'
     | '/_app/ordens/nova'
     | '/_app/ordens/'
@@ -314,6 +425,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppOrdensIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/admin/usuarios': {
+      id: '/_app/admin/usuarios'
+      path: '/admin/usuarios'
+      fullPath: '/admin/usuarios'
+      preLoaderRoute: typeof AppAdminUsuariosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/admin/permissoes': {
+      id: '/_app/admin/permissoes'
+      path: '/admin/permissoes'
+      fullPath: '/admin/permissoes'
+      preLoaderRoute: typeof AppAdminPermissoesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/admin/perfis': {
+      id: '/_app/admin/perfis'
+      path: '/admin/perfis'
+      fullPath: '/admin/perfis'
+      preLoaderRoute: typeof AppAdminPerfisRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/admin/menus': {
+      id: '/_app/admin/menus'
+      path: '/admin/menus'
+      fullPath: '/admin/menus'
+      preLoaderRoute: typeof AppAdminMenusRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/admin/ia': {
+      id: '/_app/admin/ia'
+      path: '/admin/ia'
+      fullPath: '/admin/ia'
+      preLoaderRoute: typeof AppAdminIaRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/admin/dashboard-usuario': {
+      id: '/_app/admin/dashboard-usuario'
+      path: '/admin/dashboard-usuario'
+      fullPath: '/admin/dashboard-usuario'
+      preLoaderRoute: typeof AppAdminDashboardUsuarioRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/admin/dashboard-perfil': {
+      id: '/_app/admin/dashboard-perfil'
+      path: '/admin/dashboard-perfil'
+      fullPath: '/admin/dashboard-perfil'
+      preLoaderRoute: typeof AppAdminDashboardPerfilRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/admin/configuracoes-sistema': {
+      id: '/_app/admin/configuracoes-sistema'
+      path: '/admin/configuracoes-sistema'
+      fullPath: '/admin/configuracoes-sistema'
+      preLoaderRoute: typeof AppAdminConfiguracoesSistemaRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/admin/base-conhecimento': {
+      id: '/_app/admin/base-conhecimento'
+      path: '/admin/base-conhecimento'
+      fullPath: '/admin/base-conhecimento'
+      preLoaderRoute: typeof AppAdminBaseConhecimentoRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
@@ -328,6 +502,15 @@ interface AppRouteChildren {
   AppServicosRoute: typeof AppServicosRoute
   AppTecnicosRoute: typeof AppTecnicosRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppAdminBaseConhecimentoRoute: typeof AppAdminBaseConhecimentoRoute
+  AppAdminConfiguracoesSistemaRoute: typeof AppAdminConfiguracoesSistemaRoute
+  AppAdminDashboardPerfilRoute: typeof AppAdminDashboardPerfilRoute
+  AppAdminDashboardUsuarioRoute: typeof AppAdminDashboardUsuarioRoute
+  AppAdminIaRoute: typeof AppAdminIaRoute
+  AppAdminMenusRoute: typeof AppAdminMenusRoute
+  AppAdminPerfisRoute: typeof AppAdminPerfisRoute
+  AppAdminPermissoesRoute: typeof AppAdminPermissoesRoute
+  AppAdminUsuariosRoute: typeof AppAdminUsuariosRoute
   AppOrdensIdRoute: typeof AppOrdensIdRoute
   AppOrdensNovaRoute: typeof AppOrdensNovaRoute
   AppOrdensIndexRoute: typeof AppOrdensIndexRoute
@@ -344,6 +527,15 @@ const AppRouteChildren: AppRouteChildren = {
   AppServicosRoute: AppServicosRoute,
   AppTecnicosRoute: AppTecnicosRoute,
   AppIndexRoute: AppIndexRoute,
+  AppAdminBaseConhecimentoRoute: AppAdminBaseConhecimentoRoute,
+  AppAdminConfiguracoesSistemaRoute: AppAdminConfiguracoesSistemaRoute,
+  AppAdminDashboardPerfilRoute: AppAdminDashboardPerfilRoute,
+  AppAdminDashboardUsuarioRoute: AppAdminDashboardUsuarioRoute,
+  AppAdminIaRoute: AppAdminIaRoute,
+  AppAdminMenusRoute: AppAdminMenusRoute,
+  AppAdminPerfisRoute: AppAdminPerfisRoute,
+  AppAdminPermissoesRoute: AppAdminPermissoesRoute,
+  AppAdminUsuariosRoute: AppAdminUsuariosRoute,
   AppOrdensIdRoute: AppOrdensIdRoute,
   AppOrdensNovaRoute: AppOrdensNovaRoute,
   AppOrdensIndexRoute: AppOrdensIndexRoute,

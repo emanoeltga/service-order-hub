@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
+import { loginMock } from "@/lib/auth";
 
 export const Route = createFileRoute("/login")({ component: LoginPage });
 
@@ -23,9 +24,9 @@ function LoginPage() {
     defaultValues: { email: "admin@empresa.com", password: "admin" },
   });
 
-  const onSubmit = async (_data: FormData) => {
-    await new Promise((r) => setTimeout(r, 500));
-    localStorage.setItem("os-auth", "1");
+  const onSubmit = async (data: FormData) => {
+    await new Promise((r) => setTimeout(r, 400));
+    loginMock(data.email);
     toast.success("Bem-vindo de volta!");
     navigate({ to: "/" });
   };
