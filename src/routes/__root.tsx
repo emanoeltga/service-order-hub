@@ -10,6 +10,8 @@ import {
 
 import appCss from "../styles.css?url";
 import { Toaster } from "@/components/ui/sonner";
+import { useEffect } from "react";
+import { installLogCapture } from "@/lib/api-config";
 
 function NotFoundComponent() {
   return (
