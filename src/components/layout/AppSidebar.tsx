@@ -3,7 +3,7 @@ import {
   LayoutDashboard, ClipboardList, KanbanSquare, CalendarRange, CheckSquare,
   Users, Wrench, Package, Briefcase, BarChart3, Settings, HardHat,
   UserCog, Shield, KeyRound, Menu as MenuIcon, LayoutGrid, UserCircle,
-  SlidersHorizontal, Bot, BookOpen,
+  SlidersHorizontal, Bot, BookOpen, ScrollText,
 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
@@ -36,6 +36,7 @@ const administracao = [
   { title: "Configurações do Sistema", url: "/admin/configuracoes-sistema", icon: SlidersHorizontal },
   { title: "Configuração da IA", url: "/admin/ia", icon: Bot },
   { title: "Base de Conhecimento IA", url: "/admin/base-conhecimento", icon: BookOpen },
+  { title: "Logs do Sistema", url: "/admin/logs", icon: ScrollText },
 ];
 
 const sistema = [

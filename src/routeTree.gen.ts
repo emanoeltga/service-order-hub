@@ -28,6 +28,7 @@ import { Route as AppAdminUsuariosRouteImport } from './routes/_app.admin.usuari
 import { Route as AppAdminPermissoesRouteImport } from './routes/_app.admin.permissoes'
 import { Route as AppAdminPerfisRouteImport } from './routes/_app.admin.perfis'
 import { Route as AppAdminMenusRouteImport } from './routes/_app.admin.menus'
+import { Route as AppAdminLogsRouteImport } from './routes/_app.admin.logs'
 import { Route as AppAdminIaRouteImport } from './routes/_app.admin.ia'
 import { Route as AppAdminDashboardUsuarioRouteImport } from './routes/_app.admin.dashboard-usuario'
 import { Route as AppAdminDashboardPerfilRouteImport } from './routes/_app.admin.dashboard-perfil'
@@ -128,6 +129,11 @@ const AppAdminMenusRoute = AppAdminMenusRouteImport.update({
   path: '/admin/menus',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminLogsRoute = AppAdminLogsRouteImport.update({
+  id: '/admin/logs',
+  path: '/admin/logs',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminIaRoute = AppAdminIaRouteImport.update({
   id: '/admin/ia',
   path: '/admin/ia',
@@ -174,6 +180,7 @@ export interface FileRoutesByFullPath {
   '/admin/dashboard-perfil': typeof AppAdminDashboardPerfilRoute
   '/admin/dashboard-usuario': typeof AppAdminDashboardUsuarioRoute
   '/admin/ia': typeof AppAdminIaRoute
+  '/admin/logs': typeof AppAdminLogsRoute
   '/admin/menus': typeof AppAdminMenusRoute
   '/admin/perfis': typeof AppAdminPerfisRoute
   '/admin/permissoes': typeof AppAdminPermissoesRoute
@@ -199,6 +206,7 @@ export interface FileRoutesByTo {
   '/admin/dashboard-perfil': typeof AppAdminDashboardPerfilRoute
   '/admin/dashboard-usuario': typeof AppAdminDashboardUsuarioRoute
   '/admin/ia': typeof AppAdminIaRoute
+  '/admin/logs': typeof AppAdminLogsRoute
   '/admin/menus': typeof AppAdminMenusRoute
   '/admin/perfis': typeof AppAdminPerfisRoute
   '/admin/permissoes': typeof AppAdminPermissoesRoute
@@ -226,6 +234,7 @@ export interface FileRoutesById {
   '/_app/admin/dashboard-perfil': typeof AppAdminDashboardPerfilRoute
   '/_app/admin/dashboard-usuario': typeof AppAdminDashboardUsuarioRoute
   '/_app/admin/ia': typeof AppAdminIaRoute
+  '/_app/admin/logs': typeof AppAdminLogsRoute
   '/_app/admin/menus': typeof AppAdminMenusRoute
   '/_app/admin/perfis': typeof AppAdminPerfisRoute
   '/_app/admin/permissoes': typeof AppAdminPermissoesRoute
@@ -253,6 +262,7 @@ export interface FileRouteTypes {
     | '/admin/dashboard-perfil'
     | '/admin/dashboard-usuario'
     | '/admin/ia'
+    | '/admin/logs'
     | '/admin/menus'
     | '/admin/perfis'
     | '/admin/permissoes'
@@ -278,6 +288,7 @@ export interface FileRouteTypes {
     | '/admin/dashboard-perfil'
     | '/admin/dashboard-usuario'
     | '/admin/ia'
+    | '/admin/logs'
     | '/admin/menus'
     | '/admin/perfis'
     | '/admin/permissoes'
@@ -304,6 +315,7 @@ export interface FileRouteTypes {
     | '/_app/admin/dashboard-perfil'
     | '/_app/admin/dashboard-usuario'
     | '/_app/admin/ia'
+    | '/_app/admin/logs'
     | '/_app/admin/menus'
     | '/_app/admin/perfis'
     | '/_app/admin/permissoes'
@@ -453,6 +465,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminMenusRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/admin/logs': {
+      id: '/_app/admin/logs'
+      path: '/admin/logs'
+      fullPath: '/admin/logs'
+      preLoaderRoute: typeof AppAdminLogsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/admin/ia': {
       id: '/_app/admin/ia'
       path: '/admin/ia'
@@ -507,6 +526,7 @@ interface AppRouteChildren {
   AppAdminDashboardPerfilRoute: typeof AppAdminDashboardPerfilRoute
   AppAdminDashboardUsuarioRoute: typeof AppAdminDashboardUsuarioRoute
   AppAdminIaRoute: typeof AppAdminIaRoute
+  AppAdminLogsRoute: typeof AppAdminLogsRoute
   AppAdminMenusRoute: typeof AppAdminMenusRoute
   AppAdminPerfisRoute: typeof AppAdminPerfisRoute
   AppAdminPermissoesRoute: typeof AppAdminPermissoesRoute
@@ -532,6 +552,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminDashboardPerfilRoute: AppAdminDashboardPerfilRoute,
   AppAdminDashboardUsuarioRoute: AppAdminDashboardUsuarioRoute,
   AppAdminIaRoute: AppAdminIaRoute,
+  AppAdminLogsRoute: AppAdminLogsRoute,
   AppAdminMenusRoute: AppAdminMenusRoute,
   AppAdminPerfisRoute: AppAdminPerfisRoute,
   AppAdminPermissoesRoute: AppAdminPermissoesRoute,
@@ -550,13 +571,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

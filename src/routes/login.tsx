@@ -8,6 +8,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { loginMock } from "@/lib/auth";
+import { useRef, useState } from "react";
+import { ApiUrlDialog } from "@/components/admin/ApiUrlDialog";
 
 export const Route = createFileRoute("/login")({ component: LoginPage });
 
@@ -19,6 +21,21 @@ type FormData = z.infer<typeof schema>;
 
 function LoginPage() {
   const navigate = useNavigate();
+  const [apiDialogOpen, setApiDialogOpen] = useState(false);
+  const clicksRef = useRef<{ count: number; timer: ReturnType<typeof setTimeout> | null }>({
+    count: 0, timer: null,
+  });
+
+  const handleLogoClick = () => {
+    clicksRef.current.count += 1;
+    if (clicksRef.current.timer) clearTimeout(clicksRef.current.timer);
+    clicksRef.current.timer = setTimeout(() => { clicksRef.current.count = 0; }, 1500);
+    if (clicksRef.current.count >= 5) {
+      clicksRef.current.count = 0;
+      setApiDialogOpen(true);
+    }
+  };
+
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { email: "admin@empresa.com", password: "admin" },
@@ -35,9 +52,14 @@ function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-muted to-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mx-auto size-12 rounded-xl bg-primary flex items-center justify-center mb-2">
+          <button
+            type="button"
+            onClick={handleLogoClick}
+            aria-label="OS Control"
+            className="mx-auto size-12 rounded-xl bg-primary flex items-center justify-center mb-2 select-none cursor-pointer"
+          >
             <HardHat className="size-6 text-primary-foreground" />
-          </div>
+          </button>
           <CardTitle className="text-2xl">OS Control</CardTitle>
           <CardDescription>Acesse sua conta para continuar</CardDescription>
         </CardHeader>
@@ -56,6 +78,15 @@ function LoginPage() {
           </form>
         </CardContent>
       </Card>
+      <ApiUrlDialog open={apiDialogOpen} onOpenChange={setApiDialogOpen} />
+      {/* Acesso discreto aos logs */}
+      <button
+        type="button"
+        onClick={() => navigate({ to: "/admin/logs" })}
+        aria-label="Logs"
+        title="Logs"
+        className="fixed bottom-2 right-2 size-2 rounded-full bg-muted-foreground/30 hover:bg-muted-foreground/60 transition-colors"
+      />
     </div>
   );
 }
