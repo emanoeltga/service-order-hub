@@ -26,8 +26,25 @@ import {
   type DashboardProfileConfig, type DashboardUserConfig,
   type SystemSettings, type AiSettings, type KnowledgeItem,
 } from "@/lib/admin-mock";
+import { getApiBaseUrl, pushLog } from "@/lib/api-config";
 
-export const api = axios.create({ baseURL: "/api" });
+export const api = axios.create({ baseURL: getApiBaseUrl() });
+
+// Atualiza baseURL a cada request, permitindo trocar em tempo de execução.
+api.interceptors.request.use((cfg) => {
+  cfg.baseURL = getApiBaseUrl();
+  pushLog("debug", `HTTP ${cfg.method?.toUpperCase()} ${cfg.baseURL}${cfg.url ?? ""}`);
+  return cfg;
+});
+api.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    pushLog("error", `HTTP error: ${err?.message ?? "unknown"}`, {
+      url: err?.config?.url, status: err?.response?.status,
+    });
+    return Promise.reject(err);
+  },
+);
 
 const delay = <T>(data: T, ms = 250) =>
   new Promise<T>((r) => setTimeout(() => r(data), ms));
