@@ -117,6 +117,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useEffect(() => { installLogCapture(); }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
