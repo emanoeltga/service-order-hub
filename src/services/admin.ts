@@ -17,7 +17,6 @@
  * `src/lib/admin-mock.ts`. Para integrar, basta substituir o corpo de
  * cada função por uma chamada `api.get/post/put/delete(...)`.
  */
-import axios from "axios";
 import {
   mockUsers, mockProfiles, mockMenus, mockDashboardCards,
   mockProfileDashboards, mockUserDashboards, mockSystemSettings,
@@ -26,25 +25,9 @@ import {
   type DashboardProfileConfig, type DashboardUserConfig,
   type SystemSettings, type AiSettings, type KnowledgeItem,
 } from "@/lib/admin-mock";
-import { getApiBaseUrl, pushLog } from "@/lib/api-config";
+import { api } from "@/lib/api";
 
-export const api = axios.create({ baseURL: getApiBaseUrl() });
-
-// Atualiza baseURL a cada request, permitindo trocar em tempo de execução.
-api.interceptors.request.use((cfg) => {
-  cfg.baseURL = getApiBaseUrl();
-  pushLog("debug", `HTTP ${cfg.method?.toUpperCase()} ${cfg.baseURL}${cfg.url ?? ""}`);
-  return cfg;
-});
-api.interceptors.response.use(
-  (res) => res,
-  (err) => {
-    pushLog("error", `HTTP error: ${err?.message ?? "unknown"}`, {
-      url: err?.config?.url, status: err?.response?.status,
-    });
-    return Promise.reject(err);
-  },
-);
+export { api };
 
 const delay = <T>(data: T, ms = 250) =>
   new Promise<T>((r) => setTimeout(() => r(data), ms));
