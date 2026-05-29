@@ -1,128 +1,107 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { PageHeader } from "@/components/common/PageHeader";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { PriorityBadge } from "@/components/common/PriorityBadge";
 import { LoadingState } from "@/components/common/LoadingState";
-import { AlertTriangle, ArrowLeft, Trash2, CheckCircle } from "lucide-react";
-import { osService, getApiErrorMessage } from "@/services/os";
+import { ArrowLeft, Calendar, DollarSign, User, Building2, AlertTriangle } from "lucide-react";
 import { format } from "date-fns";
-import { toast } from "sonner";
+import { osService, getApiErrorMessage } from "@/services/os";
 
 export const Route = createFileRoute("/_app/ordens/$id")({
-  component: OrdemDetalhePage,
+  component: OSDetailPage,
 });
 
-function OrdemDetalhePage() {
+function OSDetailPage() {
   const { id } = Route.useParams();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-
-  const { data: os, isLoading, error } = useQuery({
+  const { data: os, isLoading, error, refetch, isFetching } = useQuery({
     queryKey: ["service-orders", id],
     queryFn: () => osService.get(id),
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: () => osService.remove(id),
-    onSuccess: () => {
-      toast.success("Ordem de serviço removida");
-      queryClient.invalidateQueries({ queryKey: ["service-orders"] });
-      navigate({ to: "/ordens" });
-    },
-    onError: (err) => {
-      toast.error(getApiErrorMessage(err, "Erro ao excluir"));
-    },
-  });
-
-  const updateStatusMutation = useMutation({
-    mutationFn: (status: string) => osService.update(id, { status }),
-    onSuccess: () => {
-      toast.success("Status atualizado");
-      queryClient.invalidateQueries({ queryKey: ["service-orders", id] });
-      queryClient.invalidateQueries({ queryKey: ["service-orders"] });
-    },
-    onError: (err) => {
-      toast.error(getApiErrorMessage(err, "Erro ao atualizar status"));
-    },
-  });
-
   if (isLoading) return <LoadingState />;
+
   if (error || !os) {
     return (
-      <div className="rounded-lg border bg-card p-6 flex items-start gap-3">
-        <AlertTriangle className="size-5 text-destructive shrink-0 mt-0.5" />
-        <div>
-          <p className="font-medium">Erro ao carregar OS</p>
-          <p className="text-sm text-muted-foreground">{getApiErrorMessage(error)}</p>
-          <Button variant="outline" size="sm" className="mt-3" onClick={() => navigate({ to: "/ordens" })}>
-            Voltar para lista
-          </Button>
+      <div>
+        <PageHeader
+          title="Ordem de Serviço"
+          actions={
+            <Button asChild variant="outline">
+              <Link to="/ordens"><ArrowLeft className="size-4" /> Voltar</Link>
+            </Button>
+          }
+        />
+        <div className="rounded-lg border bg-card p-6 flex items-start gap-3">
+          <AlertTriangle className="size-5 text-destructive shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="font-medium">Não foi possível carregar a OS</p>
+            <p className="text-sm text-muted-foreground mt-1">{getApiErrorMessage(error)}</p>
+            <Button variant="outline" size="sm" className="mt-3" onClick={() => refetch()} disabled={isFetching}>
+              {isFetching ? "Tentando..." : "Tentar novamente"}
+            </Button>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/ordens" })}>
-          <ArrowLeft className="mr-2 size-4" /> Voltar
-        </Button>
-        <div className="flex gap-2">
-          {os.status !== "concluida" && (
-            <Button variant="outline" onClick={() => updateStatusMutation.mutate("concluida")} disabled={updateStatusMutation.isPending}>
-              <CheckCircle className="mr-2 size-4" /> Marcar como Concluída
-            </Button>
-          )}
-          <Button variant="destructive" size="icon" onClick={() => deleteMutation.mutate()} disabled={deleteMutation.isPending}>
-            <Trash2 className="size-4" />
+    <div>
+      <PageHeader
+        title={`${os.numero} · ${os.titulo}`}
+        description="Detalhes da Ordem de Serviço"
+        actions={
+          <Button asChild variant="outline">
+            <Link to="/ordens"><ArrowLeft className="size-4" /> Voltar</Link>
           </Button>
-        </div>
-      </div>
+        }
+      />
 
-      <PageHeader title={`OS #${os.numero}`} description={os.titulo} />
-
-      <div className="grid gap-6 md:grid-cols-3">
-        <Card className="md:col-span-2">
-          <CardContent className="p-6">
-            <h3 className="font-semibold mb-4">Descrição</h3>
-            <p className="text-muted-foreground whitespace-pre-wrap">{os.descricao}</p>
+      <div className="grid gap-4 lg:grid-cols-3">
+        <Card className="lg:col-span-2">
+          <CardHeader><CardTitle>Descrição</CardTitle></CardHeader>
+          <CardContent>
+            <p className="text-sm leading-relaxed text-muted-foreground">{os.descricao}</p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-6 space-y-4">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Cliente</p>
-              <p>{os.cliente}</p>
+          <CardHeader><CardTitle>Resumo</CardTitle></CardHeader>
+          <CardContent className="space-y-4 text-sm">
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">Status</span>
+              <StatusBadge status={os.status} />
             </div>
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Técnico</p>
-              <p>{os.tecnico}</p>
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">Prioridade</span>
+              <PriorityBadge priority={os.prioridade} />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Prioridade</p>
-                <PriorityBadge priority={os.prioridade} />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Status</p>
-                <StatusBadge status={os.status} />
-              </div>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Prazo</p>
-              <p>{os.prazo ? format(new Date(os.prazo), "dd/MM/yyyy") : "-"}</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Valor</p>
-              <p className="text-lg font-bold">R$ {Number(os.valor ?? 0).toLocaleString("pt-BR")}</p>
+            <div className="border-t pt-3 space-y-3">
+              <Row icon={Building2} label="Cliente" value={os.cliente} />
+              <Row icon={User} label="Técnico" value={os.tecnico} />
+              <Row icon={Calendar} label="Abertura" value={os.abertura ? format(new Date(os.abertura), "dd/MM/yyyy") : "-"} />
+              <Row icon={Calendar} label="Prazo" value={os.prazo ? format(new Date(os.prazo), "dd/MM/yyyy") : "-"} />
+              <Row icon={DollarSign} label="Valor" value={`R$ ${Number(os.valor ?? 0).toLocaleString("pt-BR")}`} />
             </div>
           </CardContent>
         </Card>
+      </div>
+    </div>
+  );
+}
+
+function Row({ icon: Icon, label, value }: { icon: React.ComponentType<{ className?: string }>; label: string; value: string }) {
+  return (
+    <div className="flex items-center gap-3">
+      <div className="size-8 rounded-md bg-muted flex items-center justify-center">
+        <Icon className="size-4 text-muted-foreground" />
+      </div>
+      <div className="flex-1 flex justify-between items-center">
+        <span className="text-muted-foreground">{label}</span>
+        <span className="font-medium">{value}</span>
       </div>
     </div>
   );
