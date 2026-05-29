@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { FormInput } from "@/components/common/FormInput";
@@ -10,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { mockClientes, mockTecnicos } from "@/lib/mock-data";
 import { toast } from "sonner";
+import { osService, clientesService, tecnicosService, getApiErrorMessage } from "@/services/os";
 
 export const Route = createFileRoute("/_app/ordens/nova")({ component: NovaOSPage });
 
@@ -26,32 +28,66 @@ type FormData = z.infer<typeof schema>;
 
 function NovaOSPage() {
   const navigate = useNavigate();
-  const { register, handleSubmit, control, formState: { errors, isSubmitting } } = useForm<FormData>({
+  const queryClient = useQueryClient();
+
+  // Tenta buscar do backend; se falhar (404 etc), cai para mocks só pra UI não travar
+  const { data: clientes } = useQuery({
+    queryKey: ["clients"],
+    queryFn: clientesService.list,
+    retry: false,
+  });
+  const { data: tecnicos } = useQuery({
+    queryKey: ["technicians"],
+    queryFn: tecnicosService.list,
+    retry: false,
+  });
+
+  const clientesOpts = (clientes && clientes.length > 0 ? clientes : mockClientes).map((c) => ({ label: c.nome, value: c.nome }));
+  const tecnicosOpts = (tecnicos && tecnicos.length > 0 ? tecnicos : mockTecnicos).map((t) => ({ label: t.nome, value: t.nome }));
+
+  const { register, handleSubmit, control, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { prioridade: "media", valor: 0 },
   });
 
-  const onSubmit = async (_data: FormData) => {
-    await new Promise((r) => setTimeout(r, 400));
-    toast.success("Ordem de Serviço criada");
-    navigate({ to: "/ordens" });
-  };
+  const createMutation = useMutation({
+    mutationFn: (payload: FormData) =>
+      osService.create({
+        titulo: payload.titulo,
+        cliente: payload.cliente,
+        tecnico: payload.tecnico,
+        prioridade: payload.prioridade as OrdemServicoPriority,
+        prazo: payload.prazo,
+        valor: payload.valor,
+        descricao: payload.descricao,
+        status: "aberta",
+      }),
+    onSuccess: () => {
+      toast.success("Ordem de Serviço criada");
+      queryClient.invalidateQueries({ queryKey: ["service-orders"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-summary"] });
+      navigate({ to: "/ordens" });
+    },
+    onError: (err) => {
+      toast.error(getApiErrorMessage(err, "Falha ao criar OS"));
+    },
+  });
 
   return (
     <div>
       <PageHeader title="Nova Ordem de Serviço" description="Preencha os dados para abrir uma nova OS" />
       <Card>
         <CardContent className="p-6">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={handleSubmit((d) => createMutation.mutate(d))} className="space-y-4">
             <FormInput label="Título" placeholder="Ex: Manutenção do servidor" {...register("titulo")} error={errors.titulo?.message} />
             <div className="grid gap-4 md:grid-cols-2">
               <Controller name="cliente" control={control} render={({ field }) => (
                 <FormSelect label="Cliente" value={field.value} onValueChange={field.onChange}
-                  options={mockClientes.map((c) => ({ label: c.nome, value: c.nome }))} error={errors.cliente?.message} />
+                  options={clientesOpts} error={errors.cliente?.message} />
               )} />
               <Controller name="tecnico" control={control} render={({ field }) => (
                 <FormSelect label="Técnico responsável" value={field.value} onValueChange={field.onChange}
-                  options={mockTecnicos.map((t) => ({ label: t.nome, value: t.nome }))} error={errors.tecnico?.message} />
+                  options={tecnicosOpts} error={errors.tecnico?.message} />
               )} />
             </div>
             <div className="grid gap-4 md:grid-cols-3">
@@ -71,7 +107,9 @@ function NovaOSPage() {
               {...register("descricao")} error={errors.descricao?.message} />
             <div className="flex justify-end gap-2 pt-2">
               <Button type="button" variant="outline" onClick={() => navigate({ to: "/ordens" })}>Cancelar</Button>
-              <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Salvando..." : "Criar OS"}</Button>
+              <Button type="submit" disabled={createMutation.isPending}>
+                {createMutation.isPending ? "Salvando..." : "Criar OS"}
+              </Button>
             </div>
           </form>
         </CardContent>
@@ -79,3 +117,5 @@ function NovaOSPage() {
     </div>
   );
 }
+
+type OrdemServicoPriority = "baixa" | "media" | "alta" | "urgente";
